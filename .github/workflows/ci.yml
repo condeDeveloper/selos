@@ -1,0 +1,47 @@
+name: testes
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  testes:
+    runs-on: ${{ matrix.so }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        so: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # Sao TRES caminhos independentes para a mesma pergunta: o crivo, a forca
+      # bruta recursiva que tenta todas as combinacoes, e a formula de Sylvester,
+      # de 1884, que nao e usada em calculo nenhum e existe so para discordar.
+      # Nenhum dos tres discorda dos outros em nenhuma linha das tabelas.
+      - name: testes
+        run: dotnet test testes/Selos.Testes/Selos.Testes.csproj -c Release --nologo -v q
+
+      - name: dois selos, e a formula de Sylvester
+        run: dotnet run --project ferramentas/Medidor/Medidor.csproj -c Release -- sylvester
+
+      - name: tres selos, onde nao ha formula
+        run: dotnet run --project ferramentas/Medidor/Medidor.csproj -c Release -- tres
+
+      - name: as caixas de nugget
+        run: dotnet run --project ferramentas/Medidor/Medidor.csproj -c Release -- nugget
+
+      - name: o problema dos selos postais
+        run: dotnet run --project ferramentas/Medidor/Medidor.csproj -c Release -- postal
+
+      - name: as potencias de dois contra o melhor
+        run: dotnet run --project ferramentas/Medidor/Medidor.csproj -c Release -- binario
+
+      - name: a dinamica contra a forca bruta
+        run: dotnet run --project ferramentas/Medidor/Medidor.csproj -c Release -- juiz
